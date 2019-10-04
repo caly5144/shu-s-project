@@ -13,7 +13,7 @@ def process(alist):
     web_list = []
     for items in alist:
         web = items[path_len:len(items)]
-        if len(web) == 0:
+        if len(web) == 0 or '【00】YH' in web:  # 排除根目录以及指定目录
             continue
         webtemp = 'zy.ycyh.ink'+'/'+'/'.join(web) + '/'
         website = webtemp.replace(' ','%20')

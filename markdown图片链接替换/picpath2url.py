@@ -40,8 +40,8 @@ def openmd(org_path,copy_path):  # 替换url链接
                  if pic_url:
                     content = pattern.sub(pic_url +')',content,count = 1)   
                     # 不知为什么正则替换会把最后一个括号替换掉，所以只能手动加了一个  
-             pretext = '---\ntitle:'+file[:-3]+'\ntoc: true\ndate: '\
-             +str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))\
+             pretext = '---\ntitle: '+file[:-3]+'\ntoc: true\ndate: '\
+             +time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())\
              +'\ntags: []\ncategories:  \n-\n---\n\n'
              handler.write(pretext)   # 写文章开头信息
              handler.write(content)

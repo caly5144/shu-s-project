@@ -11,6 +11,7 @@ from shutil import copy
 from requests import post
 from hashlib import sha1
 import pymongo
+import time
 
 def copyfile(org_path,copy_path):
     current_folder = os.listdir(org_path) # 路径下所有文件组成一个列表
@@ -27,6 +28,7 @@ def openmd(org_path,copy_path):  # 替换url链接
     for file in os.listdir(copy_path):        
         file_path = copy_path+'\\'+ file
         with open(file_path,'r+',encoding = "utf-8") as handler:
+             print('正在转化',file,'……')
              content = handler.read()
              handler.seek(0)
              handler.truncate()
@@ -38,6 +40,10 @@ def openmd(org_path,copy_path):  # 替换url链接
                  if pic_url:
                     content = pattern.sub(pic_url +')',content,count = 1)   
                     # 不知为什么正则替换会把最后一个括号替换掉，所以只能手动加了一个  
+             pretext = '---\ntitle:'+file[:-3]+'\ntoc: true\ndate: '\
+             +str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))\
+             +'\ntags: []\ncategories:  \n-\n---\n\n'
+             handler.write(pretext)   # 写文章开头信息
              handler.write(content)
              print(file,"链接已经转化完毕")
 
@@ -63,16 +69,16 @@ def upload(mycol,pic_path,pic_name): # 上传图片至sm.ms
             data_result=post(url,data=None,files=file).json()
             if data_result['message'] == 'Upload success.':
                 mycol.insert_one({"hash":pic_hash,"url":data_result['data']['url'],"delete":data_result['data']['delete']}) 
-                print(pic_name,'上传成功，链接为',data_result['data']['url'],'删除链接为',data_result['data']['delete'])
+                print(' '*4,pic_name,'上传成功，链接为',data_result['data']['url'],'删除链接为',data_result['data']['delete'])
                 result =  data_result['data']['url']
             elif data_result['message'][0:21] == 'Image upload repeated':
-                print(pic_name,'上传失败，图片已存在')	
+                print(' '*4,pic_name,'上传失败，图片已存在')	
                 result = None	
             else:
-                print('其他错误')
+                print(' '*4,'其他错误')
                 result = None
     except FileNotFoundError:
-        print(pic_name,'图片未找到，请检查该图是否存在')
+        print(' '*4,pic_name,'图片未找到，请检查该图是否存在')
         result = None
     return result
 

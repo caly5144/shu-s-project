@@ -15,7 +15,7 @@ def process(alist):
         web = items[path_len:len(items)]
         if len(web) == 0 or '【00】YH' in web:  # 排除根目录以及指定目录
             continue
-        webtemp = 'zyk.ycyh.ink'+'/'+'/'.join(web) + '/'
+        webtemp = 'http://zyk.ycyh.ink'+'/'+'/'.join(web) + '/'
         website = webtemp.replace(' ','%20')
         web_list.append([len(web),web[-1],website])  
         # 三个参数，分别为路径深度、最后一级目录名称，站点链接

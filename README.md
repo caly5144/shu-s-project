@@ -21,3 +21,7 @@
 ## [百度云ocr识别程序](https://www.sitstars.com/archives/38/)
 
 利用百度云的接口，按下特定键后进行截图并识别文字的程序。
+
+## [新冠疫情分析](https://www.sitstars.com/archives/79/)
+
+pandas数据分析实战，具体使用方法参见博客https://www.sitstars.com/archives/79/

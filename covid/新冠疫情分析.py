@@ -124,7 +124,7 @@ def type_trans(elem_list,elem):
     return elem_list
 
 def select(data=datetime.date.today().strftime('%Y-%m-%d'),item = ['confirmed','dead'],
-           sort_item = ['confirmed'],condition = '',head_row = 20):
+           sort_item = ['confirmed'],condition = '',head_row = 20,is_exp = False):
     if set(sort_item)-set(item):
         print('分类参数中有多余的参数')        
     else:
@@ -145,11 +145,17 @@ def select(data=datetime.date.today().strftime('%Y-%m-%d'),item = ['confirmed','
                 selected = df[df['date'] ==data].sort_values(by = 'date',ascending = False)
             else:
                 selected = df[df['country'] ==data].sort_values(by = sort_item,ascending = False)
-            print(selected.head(head_row))
+            
+            if is_exp:
+                file_name = '{0}_{1}.xlsx'.format(data,''.join(item))
+                selected.to_excel(file_name)
+                print('{0}数据导出成功'.format(file_name))
+            else:
+                print(selected.head(head_row))
         else:
             print('参数类型输入错误，请重新输入')
 
-def select_control(country_list = ['中国'],item_list = ['inc_confirmed'],head_row = 20): # 对照组统计
+def select_control(country_list = ['中国'],item_list = ['inc_confirmed'],head_row = 20,is_exp = False): # 对照组统计
     conn = sqlite3.connect(r'E:\sqlite3\nCoV\nCoV.db')
     tran = {"confirmed":"累计确诊","suspected":"疑似","dead":"累计死亡",
             "cured":"累计治愈","now":"现存确诊","inc_confirmed":"新增确诊",
@@ -165,7 +171,12 @@ def select_control(country_list = ['中国'],item_list = ['inc_confirmed'],head_
         df[df['country'].isin(country_list)][item].groupby('date').sum()
         df_fin['总计'+tran[item]] = df_sum[item]
     df_fin = df_fin.sort_values(by = 'date',ascending = False).head(head_row) 
-    print(df_fin)
+    if is_exp:
+        file_name = '{0}_{1}.xlsx'.format(''.join(country_list),''.join(item_list))
+        df_fin.to_excel(file_name)
+        print('{0}数据导出成功'.format(file_name))
+    else:
+        print(df_fin.head(head_row))
             
 def report():
     pass
@@ -180,7 +191,7 @@ def main():
     '''
     #select('意大利',['confirmed','dead','cured'])
     #select('2020-03-21',item = ['now','inf_ratio','death_ratio'],sort_item=['inf_ratio'],condition = 'pop>10000000')
-    select_control(['意大利','西班牙'],['inc_confirmed'])  
+    #select_control(['意大利','西班牙'],['inc_confirmed'],is_exp = True)  
 
 if __name__ == '__main__':
     main()

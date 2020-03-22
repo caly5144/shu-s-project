@@ -27,11 +27,14 @@ def data_clear():
     conn = sqlite3.connect(r'E:\sqlite3\nCoV\nCoV.db')
     region_dict = {0:'country',1:'province',2:'city'}
     for region_class in range(3):            
-        df = pd.read_sql('select * from data where {0} like {1}'.format('region_class',region_class),conn)
-        item_list = [('confirmed','inc_confirmed'),('suspected','inc_suspected'),('cured','inc_cured'),('dead','inc_dead')]
+        df = pd.read_sql('select * from data where {0} like {1}'\
+                         .format('region_class',region_class),conn)
+        item_list = [('confirmed','inc_confirmed'),('suspected','inc_suspected')
+        ,('cured','inc_cured'),('dead','inc_dead')]
         
         for index in range(4):
-            df['temp'] = df.groupby(region_dict[region_class])[item_list[index][0]].shift(1) # 添加一列        
+            df['temp'] = df.groupby(region_dict[region_class])\
+            [item_list[index][0]].shift(1) # 添加一列        
             df['temp'].fillna(0, inplace=True) # 缺失值（即疫情第一天），填充0
             df[item_list[index][1]] = df[item_list[index][0]] - df['temp']
             df = df.drop(['temp'],axis=1) 
@@ -139,15 +142,14 @@ def select(data=datetime.date.today().strftime('%Y-%m-%d'),item = ['confirmed','
                                  .format(','.join(item_list)),conn)
             
             if data[0:2]=='20':
-                data_type = 'date'
+                selected = df[df['date'] ==data].sort_values(by = 'date',ascending = False)
             else:
-                data_type = 'country'
-            selected = df[df[data_type] ==data].sort_values(by = sort_item,ascending = False)
+                selected = df[df['country'] ==data].sort_values(by = sort_item,ascending = False)
             print(selected.head(head_row))
         else:
             print('参数类型输入错误，请重新输入')
 
-def select_control(country_list = ['中国'],item_list = ['inc_confirmed']): # 对照组统计
+def select_control(country_list = ['中国'],item_list = ['inc_confirmed'],head_row = 20): # 对照组统计
     conn = sqlite3.connect(r'E:\sqlite3\nCoV\nCoV.db')
     tran = {"confirmed":"累计确诊","suspected":"疑似","dead":"累计死亡",
             "cured":"累计治愈","now":"现存确诊","inc_confirmed":"新增确诊",
@@ -162,19 +164,23 @@ def select_control(country_list = ['中国'],item_list = ['inc_confirmed']): # �
         df_fin['其他'+tran[item]] = df_sum[item] - \
         df[df['country'].isin(country_list)][item].groupby('date').sum()
         df_fin['总计'+tran[item]] = df_sum[item]
+    df_fin = df_fin.sort_values(by = 'date',ascending = False).head(head_row) 
     print(df_fin)
             
 def report():
     pass
 
 def main():
+    '''
     get_data()
     data_clear()
     pop_save()
     pop_clear()
-    country_ratio()
-    #select(item = ['now','inf_ratio','death_ratio'],sort_item=['now'],condition = 'pop>1000000')
-    #select_control()  
+    country_ratio()   
+    '''
+    #select('意大利',['confirmed','dead','cured'])
+    #select('2020-03-21',item = ['now','inf_ratio','death_ratio'],sort_item=['inf_ratio'],condition = 'pop>10000000')
+    select_control(['意大利','西班牙'],['inc_confirmed'])  
 
 if __name__ == '__main__':
     main()

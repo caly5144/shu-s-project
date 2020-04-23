@@ -35,9 +35,20 @@ def shape_judge():  # 判断用户选择的形状
     if cloud_shape == 'rectangle':
         mask = None
     elif cloud_shape == 'round':
-        x,y = np.ogrid[:w,:w]
-        mask = 255*((x-w/2) ** 2 + (y-w/2) ** 2 > 4.2*w ** 2).astype(int) 
+        print('圆形')
+        '''
+        x, y = np.ogrid[:300, :300]
+ 
+        mask = (x - 150) ** 2 + (y - 150) ** 2 > 130 ** 2
+        mask = 255 * mask.astype(int)
+        '''
+        rad = max(w,h)
+
+        x,y = np.ogrid[:rad,:rad]
+        mask = (x-rad/2) ** 2 + (y-rad/2) ** 2 > (rad/2) ** 2
+        mask = 255*mask.astype(int) 
         # 以(w/2,w/2)为圆心，半径为4.2*w的圆，255不知道干什么的，但是必须有
+
     else:
         mask = np.array(Image.open(r"shape.jpg"))
     return mask

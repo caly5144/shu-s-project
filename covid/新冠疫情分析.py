@@ -8,8 +8,11 @@ Created on Sun Mar 22 22:40:28 2020
 import pandas as pd
 import sqlite3
 import datetime
+import plotly_express as px
+import plotly
+plotly.offline.init_notebook_mode(connected=True)
 
-def get_data():
+def get_data(): # 获取数据
     conn = sqlite3.connect(r'E:\sqlite3\nCoV\nCoV.db')
     url = 'https://cdn.jsdelivr.net/gh/canghailan/Wuhan-2019-nCoV/Wuhan-2019-nCoV.csv'
     df = pd.read_csv(url)
@@ -43,43 +46,44 @@ def data_clear():
         df.to_sql(region_dict[region_class],conn,if_exists='replace')
         print(region_dict[region_class],'已添加到数据库中')
 
-def pop_save(): # 储存人口数据
-    conn = sqlite3.connect(r'E:\sqlite3\nCoV\nCoV.db')
-    df = pd.read_excel('population.xls',skiprows= 3)
-    col_n = ['Country Name','2018']
-    df = pd.DataFrame(df,columns = col_n) # 选取其中两列数据
-    df.rename(columns={'Country Name':'country', '2018':'pop'}, inplace = True)
-    df = df.set_index('country')
-    df.to_sql('pop',conn,if_exists='replace')
-    print('人口数据储存成功')
+def table_exist(conn,table): # 判断某表是否存在
+    cursor = conn.cursor()
+    cursor.execute("select name from sqlite_master where type='table'")
+    alist = cursor.fetchall()
+    alist = [num for elem in alist for num in elem] 
+    return (table in alist)
 
-
-def pop_clear(): # 人口数据整理
+def pop_clear(): # 人口数据存储与清洗
     conn = sqlite3.connect(r'E:\sqlite3\nCoV\nCoV.db')
     cursor = conn.cursor() # 获取一个光标
-    df = pd.read_sql('select * from pop',conn)
-    country_list = df['country'].to_list() # 获取population中所有国家列表
-       
+    if table_exist(conn,'pop'):
+        df = pd.read_sql('select * from pop',conn)
+        
+    else:
+        df = pd.read_excel('population.xls',skiprows= 3)
+        col_n = ['Country Name','2018']
+        df = pd.DataFrame(df,columns = col_n) # 选取其中两列数据
+        df.rename(columns={'Country Name':'country', '2018':'pop'}, inplace = True)
+        df = df.set_index('country')        
+        df.to_sql('pop',conn,if_exists='replace')
+        print('人口数据储存成功')    
+    df = df.reset_index()
+    country_list = df['country'].to_list() # 获取population中所有国家列表   
     # 获取数据库中已经存在的国家列表
     country_ncov = cursor.execute('SELECT {0} FROM {0}'.format("country")).fetchall()
     country_ncov = set([elem for item in country_ncov for elem in item])
-       
-    alist = [i for i in country_ncov if i not in country_list]
-    if '法属圭亚那' in country_list:
-        if alist:
-            print('已进行过初步清洗，但仍然存在国家名不一致的情况，修改代码后请再次运行：{0}'.format(alist))
-        else:
-            print('未发现有国家名不一致的情况，无需清洗')
-    else:
-        print('首次运行，进行初步清洗')
+    
+    # 数据清洗主程序
+    def process(df):
         add_serie = [['法属圭亚那',289763],['圣巴泰勒米',9868],['马提尼克',375554],['马约特',270400],
                      ['梵蒂冈',1000],['格恩西岛',67052],['荷属安的列斯',227000],['巴勒斯坦',5052000],
                      ['留尼汪',860000],['泽西岛',106800],['瓜德罗普',400104],['钻石公主号邮轮',3700],
-                     ['美属维尔京群岛',107300],['蒙特塞拉特',5215]]
+                     ['美属维尔京群岛',107300],['蒙特塞拉特',5215],['英属维尔京群岛',30191],['圣皮埃尔和密克隆',5800],
+                     ['福克兰群岛（马尔维纳斯）',3459],['安圭拉',16290],]
         
         col_n = ['country','pop']
         df = df.append(pd.DataFrame(add_serie, columns=col_n))
-        df.drop_duplicates(['country'],keep = "first") # 因为这行代码是拼接，所以多次运行会有重复数据
+        
           
         mapping_dict = {"country":{"俄罗斯联邦": "俄罗斯","多米尼加共和国": "多米尼加",
                                         "阿拉伯埃及共和国":"埃及","斯洛伐克共和国":"斯洛伐克",
@@ -88,16 +92,29 @@ def pop_clear(): # 人口数据整理
                                         "捷克共和国":"捷克","阿拉伯联合酋长国":"阿联酋",
                                         "文莱达鲁萨兰国":"文莱","伊朗伊斯兰共和国":"伊朗",
                                         "中非共和国":"中非","委内瑞拉玻利瓦尔共和国":"委内瑞拉",
-                                        "安道尔共和国":"安道尔"}} 
+                                        "安道尔共和国":"安道尔","马恩岛":"英国属地曼岛",
+                                        "几内亚比绍共和国":"几内亚比绍","也门共和国":"也门",
+                                        "特克斯科斯群岛":"特克斯和凯科斯群岛","阿拉伯叙利亚共和国":"叙利亚",
+                                        "北马里亚纳群岛":"北马里亚纳"}} 
         df = df.replace(mapping_dict)  # 国家名替换
-        alist = [i for i in country_ncov if i not in set(df.country.to_list())]
+        df.drop_duplicates(['country'],keep = "first") # 多次运行会有重复数据，需要进行清洗
         df = df.set_index('country')
-        df.to_sql('pop',conn,if_exists='replace')        
-        if alist:
-            print('初步清洗完毕，仍然存在国家名不一致的情况：',alist)
-        else:
-            print('人口数据清理完毕')
+        return df
     
+    
+    alist = [i for i in country_ncov if i not in country_list]
+    if alist:
+        print('尝试清洗人口数据……')
+        df = process(df)
+        alist = [i for i in country_ncov if i not in set(df.index.to_list())]
+        if alist:
+            print('已进行过初步清洗，但仍然存在国家名不一致的情况，修改代码后请再次运行：{0}'.format(alist))
+        else:
+            print('清洗完毕')
+    else:
+        print('未发现有国家名不一致的情况，无需清洗')
+    df = df.set_index('country')
+    df.to_sql('pop',conn,if_exists='replace')
 
 def country_ratio(): # 各种比率
     conn = sqlite3.connect(r'E:\sqlite3\nCoV\nCoV.db')
@@ -125,6 +142,7 @@ def type_trans(elem_list,elem):
 
 def select(data=datetime.date.today().strftime('%Y-%m-%d'),item = ['confirmed','dead'],
            sort_item = ['confirmed'],condition = '',head_row = 20,is_exp = False):
+    
     if set(sort_item)-set(item):
         print('分类参数中有多余的参数')        
     else:
@@ -142,9 +160,9 @@ def select(data=datetime.date.today().strftime('%Y-%m-%d'),item = ['confirmed','
                                  .format(','.join(item_list)),conn)
             
             if data[0:2]=='20':
-                selected = df[df['date'] ==data].sort_values(by = 'date',ascending = False)
+                selected = df[df['date'] ==data].sort_values(by = sort_item,ascending = False)
             else:
-                selected = df[df['country'] ==data].sort_values(by = sort_item,ascending = False)
+                selected = df[df['country'] ==data].sort_values(by = 'date',ascending = False)
             
             if is_exp:
                 file_name = '{0}_{1}.xlsx'.format(data,''.join(item))
@@ -154,6 +172,8 @@ def select(data=datetime.date.today().strftime('%Y-%m-%d'),item = ['confirmed','
                 print(selected.head(head_row))
         else:
             print('参数类型输入错误，请重新输入')
+            selected = pd.DataFrame()
+    return selected
 
 def select_control(country_list = ['中国'],item_list = ['inc_confirmed'],head_row = 20,is_exp = False): # 对照组统计
     conn = sqlite3.connect(r'E:\sqlite3\nCoV\nCoV.db')
@@ -178,19 +198,20 @@ def select_control(country_list = ['中国'],item_list = ['inc_confirmed'],head_
     else:
         print(df_fin.head(head_row))
             
-def report():
-    pass
+def report(): # 尚未编写完成
+    df_country = select('中国',['confirmed','death_ratio','death_ratio_x'])
+    pic = px.scatter(df_country, x='confirmed', y='death_ratio')
+
 
 def main():
-    '''
-    get_data()
-    data_clear()
-    pop_save()
-    pop_clear()
-    country_ratio()   
-    '''
-    #select('意大利',['confirmed','dead','cured'])
-    #select('2020-03-21',item = ['now','inf_ratio','death_ratio'],sort_item=['inf_ratio'],condition = 'pop>10000000')
+    
+    #get_data()
+    #data_clear()
+    #pop_clear()
+    #country_ratio()   
+    #report()
+    select('丹麦',['confirmed','dead','death_ratio_x'])
+    #select('2020-04-18',item = ['confirmed','inf_ratio'],sort_item=['inf_ratio'],condition = 'pop>1000000 and confirmed>1000')
     #select_control(['意大利','西班牙'],['inc_confirmed'],is_exp = True)  
 
 if __name__ == '__main__':

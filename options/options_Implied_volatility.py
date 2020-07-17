@@ -158,16 +158,7 @@ def fitting(df): # 多项式拟合
         
         x = df1.iloc[:,0]
         y = df1.iloc[:,i+1]
-        '''
-        for deg in np.arange(2, 11, 1): # 利用python自带报错确定最优阶数
-            with warnings.catch_warnings():  
-                warnings.filterwarnings('error') 
-                try:
-                    np.polyfit(x, y, deg)
-                except np.RankWarning:
-                    break
-                degree = deg
-        '''
+
         degree = 2
                 
         weights = np.polyfit(x, y, degree)

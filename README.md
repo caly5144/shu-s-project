@@ -43,3 +43,5 @@ pandas数据分析实战，具体使用方法参见博客https://www.sitstars.co
 ## [期权隐含波动率](https://github.com/caly5144/shu-s-project/tree/master/options)
 
 利用tushare自动拉取数据，计算某日所有期权的隐含波动率，并生成波动率微笑图和波动率曲面图。
+
+详细见：https://www.sitstars.com/archives/91/

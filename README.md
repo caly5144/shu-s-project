@@ -45,3 +45,22 @@ pandas数据分析实战，具体使用方法参见博客https://www.sitstars.co
 利用tushare自动拉取数据，计算某日所有期权的隐含波动率，并生成波动率微笑图和波动率曲面图。
 
 详细见：https://www.sitstars.com/archives/91/
+
+## [API开发](https://github.com/caly5144/shu-s-project/tree/master/API)
+
+使用fastapi开发，Demo地址：[https://api.yanshu.work](https://api.yanshu.work)，目前有以下几个API：
+
+* 随机二次元图，参见：https://www.sitstars.com/archives/87/
+* 检测网址状态
+* 查询网址是否被百度收录，参见：https://www.sitstars.com/archives/110/
+* 查询ip所在城市，数据源：https://github.com/out0fmemory/qqwry.dat
+* 查询访客ip，参见：https://www.sitstars.com/archives/109/
+* 查询访客UA
+
+使用方法：
+
+* windows：cd到API目录，输入`python main.py即可`
+* Linux：cd到API目录，输入`uvicorn main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips='*'`
+
+
+

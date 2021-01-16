@@ -2,7 +2,7 @@
 Author: Dong Xing
 Date: 2021-01-15 18:09:15
 LastEditors: Dong Xing
-LastEditTime: 2021-01-15 19:33:22
+LastEditTime: 2021-01-16 01:44:21
 Description: 网络状态码字典
 '''
 HTTP_CODE = {
@@ -17,4 +17,10 @@ HTTP_CODE = {
     404: 'Not Found',  # 服务器上无法找到被请求的资源
     500: 'Internet Server Error',  # 服务器在执行请求时发生了错误。可能是Web应用存在的 bug 或者临时的障碍
     503: 'Service Unavailable'
+}
+
+BAIDU_DICT = {
+    200:'该网址已被百度收录！',
+    403:'该网址暂未被百度收录！',
+    500:'Internet Server Error'
 }

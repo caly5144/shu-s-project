@@ -1,0 +1,20 @@
+<!--
+ * @Author: Dong Xing
+ * @Date: 2021-01-16 23:48:12
+ * @LastEditors: Dong Xing
+ * @LastEditTime: 2021-01-17 01:54:11
+ * @Description: file content
+-->
+<html>
+    <head>
+        <title>雁陎API平台</title>
+    </head>
+    <body>
+        <h1>欢迎使用雁陎API平台！</h1>
+        <p>作者博客：<a href="https://sitstars.com">雁陎的自耕地</a></p>
+        <p>目前本平台的API有：</p>
+        {% for key, value in api_dict.items() %}
+            <p><li><a href={{value.url}} target="_blank">{{value.name}}</a></li></p>
+        {% endfor %}
+    </body>
+</html>

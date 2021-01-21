@@ -2,17 +2,14 @@
 Author: Dong Xing
 Date: 2021-01-15 20:05:06
 LastEditors: Dong Xing
-LastEditTime: 2021-01-17 02:45:09
+LastEditTime: 2021-01-17 02:58:51
 Description: file content
 '''
 from fastapi import Query,APIRouter,Request
 from qqwry import QQwry
 
-try:
-    q = QQwry()
-    q.load_file('./data/qqwry.dat')
-except:
-    q = QQwry('./data/qqwry.dat')
+q = QQwry()
+q.load_file('./data/qqwry.dat')
 
 router = APIRouter()
 

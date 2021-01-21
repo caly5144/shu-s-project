@@ -145,9 +145,12 @@ def data_pivot(df): # 数据透视
     df['t'] = df['t']*365
     df['t'] = df['t'].astype(int)
     df = df.pivot_table(index=["k"],columns=["t"],values=["iv"])
+    df.columns = df.columns.droplevel(0)
+    df.index.name = None
     df = df.reset_index()
-    df.to_excel(r'iv.xlsx')
-    print('数据保存成功，请进行修改')
+    df = df.rename(columns={'index':'k'})
+
+    return df
 
 def fitting(df): # 多项式拟合    
     col_list = df.columns
@@ -171,15 +174,8 @@ def fitting(df): # 多项式拟合
             df.loc[df[x_col]==x_given, y_col] = y_predict
     return df
 
-def plot_df(): # 作图时进行的数据清洗
-    df = pd.read_excel('iv.xlsx',skiprows= 1)
-    df = df.dropna(subset=['t'])
-    df = df.drop(['t'],axis = 1)
-    df = df.rename(columns={'Unnamed: 1':'k'})
-    return df
-
-def im_surface(): # 波动率曲面作图
-    df = plot_df()
+def im_surface(df): # 波动率曲面作图
+    # df = plot_df()
     df = fitting(df)    
     #df.to_excel('iv_fitting.xlsx')
     df = df.set_index('k')
@@ -197,8 +193,8 @@ def im_surface(): # 波动率曲面作图
     #fig.write_image("fig1.jpg")
     plotly.offline.plot(fig)
 
-def smile_plot(): # 波动率微笑作图
-    df = plot_df()
+def smile_plot(df): # 波动率微笑作图
+    # df = plot_df()
     df = df.set_index('k')
     df = df.stack().reset_index()
     df.columns = ['k', 'days', 'iv']
@@ -206,13 +202,14 @@ def smile_plot(): # 波动率微笑作图
     plotly.offline.plot(fig)
 
 def main():
-    date = '20200515'
+    date = '20210120'
+    # plot_df()
     df = extra_data(date) # 提取数据
     df = data_clear(df) # 数据清洗
     df = cal_iv(df) # 计算隐含波动率
-    data_pivot(df) # 数据透视表
-    smile_plot() # 波动率微笑
-    im_surface() # 波动率曲面
+    df = data_pivot(df) # 数据透视表
+    smile_plot(df) # 波动率微笑
+    im_surface(df) # 波动率曲面
     
 if __name__ == '__main__':
     main()

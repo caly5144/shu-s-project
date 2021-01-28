@@ -62,5 +62,11 @@ pandas数据分析实战，具体使用方法参见博客https://www.sitstars.co
 * windows：cd到API目录，输入`python main.py即可`
 * Linux：cd到API目录，输入`uvicorn main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips='*'`
 
+## [文本相似度检测](https://github.com/caly5144/shu-s-project/tree/master/text)
+
+给定两个txt文档，检测其相似度。
+
+详见：https://www.sitstars.com/archives/112/
+
 
 

@@ -6,10 +6,13 @@ LastEditTime: 2021-01-17 02:58:51
 Description: file content
 '''
 from fastapi import Query,APIRouter,Request
-from qqwry import QQwry
+try:
+    from qqwry import QQwry
 
-q = QQwry()
-q.load_file('./data/qqwry.dat')
+    q = QQwry()
+    q.load_file('./data/qqwry.dat')
+except:
+    print('qqwry导入失败 or qqwry.dat not found')
 
 router = APIRouter()
 

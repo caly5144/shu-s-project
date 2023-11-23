@@ -1,16 +1,20 @@
 '''
 Author: Dong Xing
 Date: 2021-01-14 22:19:24
-LastEditors: Dong Xing
-LastEditTime: 2021-01-17 02:05:02
+LastEditors: caly5144 514458959@qq.com
+LastEditTime: 2023-11-23 11:28:28
 Description: 随机ACG图
 '''
 from typing import List
 from fastapi import Query,APIRouter,Request
 from fastapi.responses import RedirectResponse,HTMLResponse
 from fastapi.templating import Jinja2Templates
-from lib.data import mycol
 import random
+
+try:
+    from lib.data import mycol
+except:
+    print('mongo数据库配置错误')
 
 templates = Jinja2Templates(directory="templates")
 

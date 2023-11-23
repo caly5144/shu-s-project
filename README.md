@@ -53,14 +53,17 @@ pandas数据分析实战，具体使用方法参见博客https://www.sitstars.co
 * 随机二次元图，参见：https://www.sitstars.com/archives/87/
 * 检测网址状态
 * 查询网址是否被百度收录，参见：https://www.sitstars.com/archives/110/
-* 查询ip所在城市，数据源：https://github.com/out0fmemory/qqwry.dat，下载最新版本的qqwry.dat，然后放到./API/data目录下即可
+* 查询ip所在城市，下载最新版本的qqwry.dat，然后放到./API/data目录下即可，数据源：https://github.com/out0fmemory/qqwry.dat
 * 查询访客ip，参见：https://www.sitstars.com/archives/109/
 * 查询访客UA
+* Bing每日一图，可获取链接或Base64
 
 使用方法：
 
 * windows：cd到API目录，输入`python main.py即可`
 * Linux：cd到API目录，输入`uvicorn main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips='*'`
+
+ 关于默认文档打不开的解决方案，参见：https://www.sitstars.com/archives/123/
 
 ## [文本相似度检测](https://github.com/caly5144/shu-s-project/tree/master/text)
 

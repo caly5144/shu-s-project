@@ -1,21 +1,21 @@
 '''
 Author: Dong Xing
 Date: 2021-01-17 00:42:44
-LastEditors: Dong Xing
-LastEditTime: 2021-01-17 02:20:38
+LastEditors: caly5144 514458959@qq.com
+LastEditTime: 2023-11-23 10:14:25
 Description: file content
 '''
 import requests
-import os
-import time
+# import os
+# import time
 import re
-import sqlite3
+# import sqlite3
 import urllib.parse
 from typing import Optional
 from fastapi import APIRouter,Query, Header
-from fastapi.responses import RedirectResponse, HTMLResponse
-from lib.httpcode_dict import HTTP_CODE,BAIDU_DICT
-from lib.utility import get_tables
+# from fastapi.responses import RedirectResponse, HTMLResponse
+from lib.httpcode_dict import HTTP_CODE #,BAIDU_DICT
+# from lib.utility import get_tables
 
 router = APIRouter()
 

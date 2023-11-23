@@ -53,7 +53,7 @@ pandas数据分析实战，具体使用方法参见博客https://www.sitstars.co
 * 随机二次元图，参见：https://www.sitstars.com/archives/87/
 * 检测网址状态
 * 查询网址是否被百度收录，参见：https://www.sitstars.com/archives/110/
-* 查询ip所在城市，数据源：https://github.com/out0fmemory/qqwry.dat
+* 查询ip所在城市，数据源：https://github.com/out0fmemory/qqwry.dat，下载最新版本的qqwry.dat，然后放到./API/data目录下即可
 * 查询访客ip，参见：https://www.sitstars.com/archives/109/
 * 查询访客UA
 
